@@ -4,7 +4,7 @@
   --dim: #8c8a84;
   --line: #1f1f1f;
   --frame: 14px;
-  --player: 112px;
+  --player: 172px;
   /* Zona que el iPhone reserva abajo (esquinas redondeadas y barra de inicio). */
   --safe: env(safe-area-inset-bottom, 0px);
   /* Fuente secundaria para rótulos en mayúsculas (la más cercana a la Lovelo del logo). */
@@ -194,23 +194,25 @@ li.playing .ep-num { color: var(--ink); }
 .bar::before, .fill { content: ''; position: absolute; left: 0; top: 0; height: 2px; }
 .bar::before { right: 0; background: var(--line); }
 .fill { width: 0; background: var(--ink); }
+/* Todo centrado en columna: título arriba (una línea), controles, y el tiempo debajo. El hueco
+   entre el título y los controles es donde arde la llama al sonar. */
 .player-row {
   max-width: 900px;
   height: calc(100% - 14px);
   margin: 0 auto;
   display: flex;
-  gap: 22px;
+  flex-direction: column;
   align-items: center;
-  padding: 0 20px 6px;
+  justify-content: space-between;
+  padding: 0 20px 8px;
   position: relative;
 }
-/* Los saltos van a la altura de la cara de la calavera, no del centro de la llama. */
-.controls { display: flex; align-items: flex-end; gap: 14px; flex: none; }
+/* Los saltos y el play van centrados en la misma línea. */
+.controls { display: flex; align-items: center; gap: 30px; flex: none; margin: auto 0 10px; }
 .skip {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   flex: none;
-  margin-bottom: 8px;
   background: none;
   border: 0;
   padding: 0;
@@ -222,47 +224,50 @@ li.playing .ep-num { color: var(--ink); }
 .skip .arc { fill: none; stroke: currentColor; stroke-width: 1.1; }
 .skip .tip { fill: currentColor; }
 .skip text { fill: currentColor; font-family: var(--serif); font-size: 6.6px; text-anchor: middle; }
-.player-info { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
-.player-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 20px; }
-.player-time { color: var(--dim); font-size: 14px; font-variant-numeric: tabular-nums; }
-/* La calavera es el botón de play. En pausa se ve apagada (gris) con un triángulo encima; al
-   sonar, la llama se abre desde la cara y arde en bucle. */
+.player-title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 20px; line-height: 1.3; text-align: center; }
+.player-time { color: var(--dim); font-size: 15px; line-height: 1.3; font-variant-numeric: tabular-nums; }
+/* El botón de play. En pausa solo se ve el triángulo. Al sonar aparece la calavera en llamas
+   en su lugar: la cara queda donde estaba el triángulo y la llama sube por encima del botón. */
 .skull {
+  --art-w: 76px;
+  --art-h: 114px;
   position: relative;
   width: 60px;
-  height: 90px;
+  height: 60px;
   flex: none;
   background: none;
   border: 0;
   padding: 0;
   cursor: pointer;
-  transform-origin: 50% 85%;
   filter: drop-shadow(0 0 0 rgba(237, 233, 225, 0));
   transition: filter .8s ease;
   -webkit-tap-highlight-color: transparent;
 }
 .skull.lit { filter: drop-shadow(0 0 7px rgba(237, 233, 225, .5)); animation: ignite .7s ease-out; }
-/* Copia fija y atenuada del último cuadro: es la calavera "apagada". */
-.skull-eyes { opacity: .26; transition: opacity .3s ease; }
-.skull:hover .skull-eyes { opacity: .4; }
-.skull.lit .skull-eyes { opacity: 0; transition: opacity 0s .7s; }
+.skull-eyes { display: none; }
 .skull-play {
   position: absolute;
   left: 50%;
-  top: 69%;
-  width: 34%;
-  height: auto;
+  top: 50%;
+  width: 28px;
+  height: 28px;
   transform: translate(-42%, -50%);
   fill: var(--ink);
   transition: opacity .25s ease;
 }
+.skull:hover .skull-play { fill: #fff; }
 .skull.lit .skull-play { opacity: 0; }
-/* La llama: al encender se abre desde la cara; al apagar solo se desvanece y luego se recoge. */
+/* La llama: al encender se abre desde la cara; al apagar se desvanece y desaparece. La cara
+   de la calavera está al 69 % de la altura del dibujo; ahí se alinea con el centro del botón. */
 .skull-clip {
   position: absolute;
-  inset: 0;
+  left: calc(50% - var(--art-w) / 2);
+  top: calc(50% - var(--art-h) * .69);
+  width: var(--art-w);
+  height: var(--art-h);
   overflow: hidden;
   opacity: 0;
+  pointer-events: none;
   clip-path: polygon(27.5% 65.5%, 57.5% 66%, 57.5% 76%, 45% 79.5%, 36% 79.5%, 36% 75%, 27.5% 75%);
   transition: opacity .45s ease, clip-path 0s .45s;
 }
@@ -294,14 +299,8 @@ li.playing .ep-num { color: var(--ink); }
 /* Celular y pantallas angostas: el reproductor va en dos renglones (título y tiempo arriba,
    controles centrados abajo). */
 @media (max-width: 700px) {
-  :root { --player: 158px; }
-  .player-row { flex-direction: column-reverse; justify-content: center; gap: 2px; padding: 0 16px 4px; }
-  .controls { gap: 30px; }
-  .skip { width: 44px; height: 44px; margin-bottom: 9px; }
-  .player-info { flex: none; width: 100%; flex-direction: row; justify-content: space-between; align-items: baseline; gap: 12px; }
-  .player-title { font-size: 20px; }
-  .player-time { flex: none; font-size: 13px; }
-  .skull { width: 66px; height: 99px; }
+  .player-row { padding: 0 16px 6px; }
+  .player-title { font-size: 19px; }
 }
 
 /* Computadora: portada partida en dos (logo grande | título y último episodio), contenido
@@ -335,7 +334,7 @@ li.playing .ep-num { color: var(--ink); }
     column-gap: 72px;
   }
   #episodios { grid-column: 1 / -1; }
-  .player-row { max-width: 1080px; padding: 0 40px 6px; }
+  .player-row { max-width: 1080px; padding: 0 40px 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
