@@ -14,7 +14,55 @@ const audio = $('audio');
 let episodes = [];
 let current = null;
 
-const fmtDate = (d) => d.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\./g, '');
+// Textos del sitio en los dos idiomas. Los títulos y descripciones de los episodios vienen del
+// feed tal como se publicaron; eso no se traduce.
+const I18N = {
+  es: {
+    navEpisodes: "Episodios",
+    navAbout: "Acerca",
+    navListen: "Escuchar",
+    latest: "Último episodio",
+    sessionNo: "Session n.º",
+    loading: "Cargando episodios…",
+    loadError: "No se pudieron cargar los episodios. Escúchalos en Spotify o Apple Podcasts.",
+    released: "Publicado el",
+    length: "Duración:",
+    description: "Descripción de",
+    play: "Reproducir",
+    pause: "Pausar",
+    theLatest: "el último episodio",
+    about1: "Breakdown Sessions es un podcast en español e inglés dedicado al análisis y la conversación sobre rock y metal.",
+    about2: "En cada episodio exploramos canciones, álbumes y bandas desde distintos ángulos: composición, producción, letras, contexto y actualidad de la escena. También compartimos opiniones personales, experiencias como músicos y reflexiones sobre lo que está pasando en el género hoy.",
+    about3: "Un espacio para hablar de música con criterio, sin exageraciones. Solo conversaciones honestas sobre las bandas y los sonidos que están marcando a esta generación.",
+    byline: "Conduce Victor Martinez · Nuevos episodios cada semana",
+  },
+  en: {
+    navEpisodes: "Episodes",
+    navAbout: "About",
+    navListen: "Listen",
+    latest: "Latest episode",
+    sessionNo: "Session no.",
+    loading: "Loading episodes…",
+    loadError: "Couldn't load the episodes. Listen on Spotify or Apple Podcasts.",
+    released: "Released",
+    length: "Length:",
+    description: "Description of",
+    play: "Play",
+    pause: "Pause",
+    theLatest: "the latest episode",
+    about1: "Breakdown Sessions is a podcast in Spanish and English devoted to analysis and conversation about rock and metal.",
+    about2: "In each episode we explore songs, albums, and bands from different angles: songwriting, production, lyrics, context, and what's happening in the scene. We also share personal opinions, our experience as musicians, and thoughts on where the genre is today.",
+    about3: "A place to talk about music with judgment and without hype. Just honest conversations about the bands and sounds shaping this generation.",
+    byline: "Hosted by Victor Martinez · New episodes every week",
+  },
+};
+let lang = 'es';
+try {
+  if (I18N[localStorage.getItem('lang')]) lang = localStorage.getItem('lang');
+} catch {}
+const t = (key) => I18N[lang][key];
+
+const fmtDate = (d) => d.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\./g, '');
 
 function fmtTime(s) {
   if (!isFinite(s)) return '0:00';
@@ -74,14 +122,14 @@ function render() {
     const body = el('div', 'ep-body');
     body.hidden = true;
     // En celular la fecha no cabe en el renglón, así que abre la descripción.
-    body.append(el('p', 'ep-when', `Publicado el ${fmtDate(ep.date)}`));
+    body.append(el('p', 'ep-when', `${t('released')} ${fmtDate(ep.date)}`));
     ep.body.forEach((p) => body.append(el('p', null, p)));
-    if (ep.duration) body.append(el('p', null, `Duración: ${ep.duration}`));
+    if (ep.duration) body.append(el('p', null, `${t('length')} ${ep.duration}`));
 
     const more = el('button', 'more');
     more.type = 'button';
     more.setAttribute('aria-expanded', 'false');
-    more.setAttribute('aria-label', `Descripción de Session ${ep.num}`);
+    more.setAttribute('aria-label', `${t('description')} Session ${ep.num}`);
     more.addEventListener('click', () => {
       body.hidden = !body.hidden;
       more.setAttribute('aria-expanded', String(!body.hidden));
@@ -92,15 +140,10 @@ function render() {
   });
 
   const latest = episodes[0];
-  $('latest-num').textContent = latest.title.startsWith('Session') ? 'Último episodio' : `Session n.º ${latest.num}`;
+  $('latest-num').textContent = latest.title.startsWith('Session') ? t('latest') : `${t('sessionNo')} ${latest.num}`;
   $('latest-title').textContent = latest.title;
   $('latest-meta').textContent = [fmtDate(latest.date), latest.duration].filter(Boolean).join(' · ');
-  $('latest-play').addEventListener('click', () => toggleEpisode(0));
   $('latest').hidden = false;
-
-  // El reproductor queda a la vista desde el inicio, con el último episodio listo.
-  load(0);
-  $('player').hidden = false;
 }
 
 function open(i, scroll) {
@@ -146,10 +189,10 @@ function syncButtons() {
   const on = playing();
   const set = (btn, playing, name) => {
     btn.innerHTML = btn.classList.contains('play-lg') ? vinyl(playing) : glyph(playing);
-    btn.setAttribute('aria-label', `${playing ? 'Pausar' : 'Reproducir'} ${name}`.trim());
+    btn.setAttribute('aria-label', `${playing ? t('pause') : t('play')} ${name}`.trim());
   };
-  $('toggle').setAttribute('aria-label', on ? 'Pausar' : 'Reproducir');
-  set($('latest-play'), on && current === 0, 'el último episodio');
+  $('toggle').setAttribute('aria-label', on ? t('pause') : t('play'));
+  set($('latest-play'), on && current === 0, t('theLatest'));
   [...$('episodes').children].forEach((li, j) => set(li.querySelector('.play'), on && current === j, `Session ${episodes[j].num}`));
 }
 
@@ -260,6 +303,27 @@ $('bar').addEventListener('keydown', (e) => {
 
 $('year').textContent = new Date().getFullYear();
 
+// Cambio de idioma: traduce los textos fijos y vuelve a pintar la lista (fechas y rótulos).
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach((node) => (node.textContent = t(node.dataset.i18n)));
+  document.querySelectorAll('.lang button').forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
+  if (!episodes.length) return;
+  render();
+  [...$('episodes').children].forEach((li, j) => li.classList.toggle('playing', j === current));
+  syncButtons();
+}
+document.querySelectorAll('.lang button').forEach((btn) =>
+  btn.addEventListener('click', () => {
+    lang = btn.dataset.lang;
+    try {
+      localStorage.setItem('lang', lang);
+    } catch {}
+    applyLang();
+  })
+);
+applyLang();
+
 fetch(FEED)
   .then((r) => {
     if (!r.ok) throw new Error(r.status);
@@ -270,11 +334,16 @@ fetch(FEED)
     if (!episodes.length) throw new Error('feed vacío');
     $('status').hidden = true;
     render();
+    // El reproductor queda a la vista desde el inicio, con el último episodio listo.
+    $('latest-play').addEventListener('click', () => toggleEpisode(0));
+    load(0);
+    $('player').hidden = false;
     // Los enlaces viejos /episode/<slug> llegan aquí como ?e=<slug> (ver 404.html).
     const slug = new URLSearchParams(location.search).get('e');
     const i = episodes.findIndex((ep) => ep.slug === slug);
     if (i >= 0) open(i, true);
   })
   .catch(() => {
-    $('status').textContent = 'No se pudieron cargar los episodios. Escúchalos en Spotify o Apple Podcasts.';
+    $('status').dataset.i18n = 'loadError';
+    $('status').textContent = t('loadError');
   });

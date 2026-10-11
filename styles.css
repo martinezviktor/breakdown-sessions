@@ -334,21 +334,22 @@ li.playing .ep-num { color: var(--ink); }
   .player-title { font-size: 19px; }
 }
 
-/* Computadora y tableta: el reproductor va en un solo renglón y más bajo. Título a la
-   izquierda, controles al centro, tiempo a la derecha; la llama es un poco más chica. */
+/* Computadora y tableta: el reproductor va en un solo renglón y más bajo, con todo centrado a
+   la misma altura. Título a la izquierda, controles al centro, tiempo a la derecha. La llama
+   es más chica para caber sin salirse de la barra. */
 @media (min-width: 701px) {
-  :root { --player: 108px; }
+  :root { --player: 100px; }
   .player-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    align-items: end;
+    align-items: center;
     column-gap: 32px;
-    padding-bottom: 8px;
+    padding-bottom: 0;
   }
-  .player-title { justify-self: start; text-align: left; margin-bottom: 13px; }
-  .player-time { justify-self: end; margin-bottom: 16px; }
+  .player-title { justify-self: start; text-align: left; }
+  .player-time { justify-self: end; }
   .controls { margin: 0; gap: 26px; }
-  .skull { --art-w: 60px; --art-h: 90px; width: 52px; height: 52px; }
+  .skull { --art-w: 56px; --art-h: 84px; width: 52px; height: 52px; }
   .skull-play { width: 26px; height: 26px; }
 }
 
@@ -405,3 +406,18 @@ li.playing .ep-num { color: var(--ink); }
 .eyebrow { font-size: 14px; }
 .footer { font-size: 13px; }
 .tagline { font-size: 15px; margin-top: 12px; }
+
+/* Selector de idioma, en el pie. */
+.lang { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 18px; }
+.lang button {
+  background: none;
+  border: 0;
+  padding: 4px 2px;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--dim);
+  cursor: pointer;
+}
+.lang button:hover { color: var(--ink); }
+.lang button[aria-pressed="true"] { color: var(--ink); border-bottom: 1px solid var(--ink); }
