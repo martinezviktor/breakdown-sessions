@@ -1,3 +1,5 @@
 node_modules
 .vite
 .DS_Store
+# Harper sale con la segunda temporada; sus imagenes se guardan aqui sin publicarse.
+assets/harper/
