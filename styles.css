@@ -208,13 +208,12 @@ li.playing .ep-num { color: var(--ink); }
   transition: filter .8s ease;
 }
 .skull.lit { filter: drop-shadow(0 0 7px rgba(242, 240, 234, .5)); animation: ignite .7s ease-out; }
-/* Los ojos y la nariz son una foto fija del video, siempre a la vista en pausa. */
+/* Los ojos y la nariz son una imagen fija, siempre a la vista en pausa. */
 .skull-eyes {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  filter: url(#luma);
   clip-path: polygon(27.5% 65.5%, 57.5% 66%, 57.5% 76%, 45% 79.5%, 36% 79.5%, 36% 75%, 27.5% 75%);
 }
 .skull.lit .skull-eyes { opacity: 0; transition: opacity 0s .7s; }
@@ -232,8 +231,9 @@ li.playing .ep-num { color: var(--ink); }
   clip-path: polygon(0 0, 100% 0, 100% 100%, 60% 100%, 0 100%, 0 60%, 0 30%);
   transition: opacity .1s linear, clip-path .7s cubic-bezier(.2, .9, .3, 1);
 }
-.skull video { position: absolute; inset: 0; width: 100%; height: 100%; filter: url(#luma); transition: opacity .25s linear; }
-.skull video + video { opacity: 0; }
+/* Los videos solo alimentan al lienzo, que es lo que se ve (con el negro vuelto transparente). */
+.skull canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.skull video { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
 .skull[hidden] { display: none; }
 @keyframes ignite {
   0% { transform: scale(.82); }

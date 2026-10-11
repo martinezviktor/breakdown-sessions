@@ -135,15 +135,43 @@ function seek(ratio) {
 
 $('toggle').addEventListener('click', () => (audio.paused ? audio.play() : audio.pause()));
 // La calavera del reproductor: la llama se enciende y se mueve al dar play, y se apaga en pausa.
+// Los videos no se muestran: cada cuadro se pinta en un lienzo volviendo transparente el negro,
+// para que la llama pueda asomarse sobre la página (funciona igual en todos los navegadores).
 // El video no empata al terminar, así que hay dos copias: poco antes del final arranca la otra
 // desde cero y se funden entre sí.
 const skull = $('skull');
 const clips = [...skull.querySelectorAll('video')];
+const flame = $('skull-flame');
+const pen = flame.getContext('2d', { willReadFrequently: true });
+const FADE = 400;
 let front = 0;
-// Copia el cuadro actual a la foto fija de los ojos, para que al apagarse la llama no brinquen.
-const eyes = $('skull-eyes');
-const snapEyes = () => clips[front].readyState >= 2 && eyes.getContext('2d').drawImage(clips[front], 0, 0, eyes.width, eyes.height);
-clips[0].addEventListener('loadeddata', snapEyes);
+let fadeStart = -Infinity;
+let painting = false;
+
+function paintFlame() {
+  const mix = Math.min(1, (performance.now() - fadeStart) / FADE);
+  const { width: w, height: h } = flame;
+  pen.globalAlpha = 1;
+  if (mix < 1) pen.drawImage(clips[1 - front], 0, 0, w, h);
+  pen.globalAlpha = mix;
+  if (clips[front].readyState >= 2) pen.drawImage(clips[front], 0, 0, w, h);
+  const frame = pen.getImageData(0, 0, w, h);
+  const px = frame.data;
+  for (let i = 0; i < px.length; i += 4) {
+    px[i + 3] = px[i];
+    px[i] = 242;
+    px[i + 1] = 240;
+    px[i + 2] = 234;
+  }
+  pen.putImageData(frame, 0, 0);
+}
+
+function loopFlame() {
+  if (audio.paused) return (painting = false);
+  paintFlame();
+  requestAnimationFrame(loopFlame);
+}
+
 clips.forEach((clip, i) => {
   clip.addEventListener('error', () => (skull.hidden = true));
   clip.addEventListener('timeupdate', () => {
@@ -152,9 +180,7 @@ clips.forEach((clip, i) => {
     front = 1 - i;
     next.currentTime = 0;
     next.play().catch(() => {});
-    next.style.opacity = 1;
-    // La que sale espera a que la nueva ya esté visible; si se cruzan a medias, la calavera se ve gris.
-    setTimeout(() => (clip.style.opacity = 0), 450);
+    fadeStart = performance.now();
   });
 });
 
@@ -162,11 +188,14 @@ audio.addEventListener('play', () => {
   syncButtons();
   skull.classList.add('lit');
   clips.forEach((clip, i) => (i === front || (clip.currentTime > 0 && !clip.ended)) && clip.play().catch(() => {}));
+  if (!painting) {
+    painting = true;
+    requestAnimationFrame(loopFlame);
+  }
 });
 audio.addEventListener('pause', () => {
   syncButtons();
   clips.forEach((clip) => clip.pause());
-  snapEyes();
   skull.classList.remove('lit');
 });
 audio.addEventListener('timeupdate', () => {
