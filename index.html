@@ -2,6 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<script>
+// Quien entre sin la "s" pasa a la versión segura (por si GitHub no lo redirige).
+if (location.protocol === 'http:' && /(^|.)breakdownsessions.com$/.test(location.hostname)) location.replace('https://breakdownsessions.com' + location.pathname + location.search + location.hash);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Breakdown Sessions — Podcast de rock y metal</title>
 <meta name="description" content="Breakdown Sessions es un podcast en español dedicado al análisis y conversación sobre rock y metal. Nuevos episodios cada semana.">
