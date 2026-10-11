@@ -148,6 +148,18 @@ function seek(ratio) {
 }
 
 $('toggle').addEventListener('click', toggle);
+
+// Saltos de 15 segundos (botones y controles del sistema).
+function skip(seconds) {
+  const end = isFinite(audio.duration) ? audio.duration : Infinity;
+  audio.currentTime = Math.max(0, Math.min(end, audio.currentTime + seconds));
+}
+$('back15').addEventListener('click', () => skip(-15));
+$('fwd15').addEventListener('click', () => skip(15));
+if ('mediaSession' in navigator) {
+  navigator.mediaSession.setActionHandler('seekbackward', () => skip(-15));
+  navigator.mediaSession.setActionHandler('seekforward', () => skip(15));
+}
 // La calavera del reproductor: la llama se enciende y se mueve al dar play, y se apaga en pausa.
 // El video (un bucle que ya empata solo) no se muestra: cada cuadro se pinta en un lienzo
 // volviendo transparente el negro, para que la llama pueda asomarse sobre la página.
@@ -232,8 +244,8 @@ $('bar').addEventListener('click', (e) => {
   seek((e.clientX - r.left) / r.width);
 });
 $('bar').addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight') audio.currentTime += 15;
-  if (e.key === 'ArrowLeft') audio.currentTime -= 15;
+  if (e.key === 'ArrowRight') skip(15);
+  if (e.key === 'ArrowLeft') skip(-15);
 });
 
 $('year').textContent = new Date().getFullYear();
