@@ -421,3 +421,29 @@ li.playing .ep-num { color: var(--ink); }
 }
 .lang button:hover { color: var(--ink); }
 .lang button[aria-pressed="true"] { color: var(--ink); border-bottom: 1px solid var(--ink); }
+
+/* Celular y tableta: "BREAKDOWN SESSIONS" siempre en un solo renglón. El tamaño se calcula a
+   partir del ancho de la pantalla para que quepa, y "PODCAST" se encoge en proporción. */
+@media (max-width: 959px) {
+  .hero h1 {
+    white-space: nowrap;
+    letter-spacing: .2em;
+    margin-right: -.2em;
+    font-size: min(40px, calc((100vw - 68px) / 15));
+  }
+  .tagline { font-size: clamp(11px, calc((100vw - 68px) / 21), 15px); }
+}
+
+/* Celular: espacios parejos en la portada. El logo trae margen negro propio dentro de la
+   imagen (~18 % arriba y abajo); se compensa para que los huecos que se ven sean iguales. */
+@media (max-width: 700px) {
+  .nav { padding-top: 24px; position: relative; z-index: 1; }
+  .hero { min-height: 0; justify-content: flex-start; padding: 0 20px 36px; }
+  .logo { margin: -10px 0 -11px; }
+  .tagline { margin-top: 8px; }
+  .latest { margin-top: 32px; }
+  .latest h2 { margin: 8px 0 20px; }
+  section { padding: 36px 0; }
+  section > .eyebrow { margin-bottom: 24px; }
+  .footer { padding: 32px 20px; }
+}
