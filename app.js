@@ -62,9 +62,10 @@ function render() {
     play.type = 'button';
     play.addEventListener('click', () => toggleEpisode(i));
 
+    // Tocar el título reproduce el episodio; el "+" de al lado abre su descripción.
     const row = el('button', 'ep');
     row.type = 'button';
-    row.setAttribute('aria-expanded', 'false');
+    row.addEventListener('click', () => toggleEpisode(i));
     row.append(el('span', 'ep-num', ep.num), el('span', 'ep-title', ep.title), el('span', 'ep-date', fmtDate(ep.date)));
 
     const body = el('div', 'ep-body');
@@ -72,11 +73,15 @@ function render() {
     ep.body.forEach((p) => body.append(el('p', null, p)));
     if (ep.duration) body.append(el('p', null, `Duración: ${ep.duration}`));
 
-    row.addEventListener('click', () => {
+    const more = el('button', 'more');
+    more.type = 'button';
+    more.setAttribute('aria-expanded', 'false');
+    more.setAttribute('aria-label', `Descripción de Session ${ep.num}`);
+    more.addEventListener('click', () => {
       body.hidden = !body.hidden;
-      row.setAttribute('aria-expanded', String(!body.hidden));
+      more.setAttribute('aria-expanded', String(!body.hidden));
     });
-    head.append(play, row);
+    head.append(play, row, more);
     li.append(head, body);
     list.append(li);
   });
@@ -97,7 +102,7 @@ function open(i, scroll) {
   const li = $('episodes').children[i];
   if (!li) return;
   li.querySelector('.ep-body').hidden = false;
-  li.querySelector('.ep').setAttribute('aria-expanded', 'true');
+  li.querySelector('.more').setAttribute('aria-expanded', 'true');
   if (scroll) li.scrollIntoView({ block: 'center' });
 }
 

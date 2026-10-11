@@ -133,6 +133,7 @@ section > .eyebrow { text-align: center; margin-bottom: 40px; }
 .episodes { list-style: none; margin: 0; padding: 0; }
 .episodes li { border-bottom: 1px solid var(--line); }
 .ep-row { display: flex; align-items: center; gap: 16px; }
+.ep-row .more { margin-left: -8px; }
 .ep {
   flex: 1;
   min-width: 0;
@@ -151,6 +152,32 @@ section > .eyebrow { text-align: center; margin-bottom: 40px; }
 .ep-num, .ep-date { color: var(--dim); font-size: 15px; }
 .ep-date { white-space: nowrap; }
 .ep:hover .ep-title { font-style: italic; }
+/* El "+" que abre la descripción; al abrirla pasa a "−". */
+.more {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  position: relative;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--dim);
+  cursor: pointer;
+}
+.more:hover { color: var(--ink); }
+.more::before, .more::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+  transition: transform .2s ease, opacity .2s ease;
+}
+.more::after { transform: translate(-50%, -50%) rotate(90deg); }
+.more[aria-expanded="true"]::after { transform: translate(-50%, -50%) rotate(0deg); opacity: 0; }
 .ep-body { padding: 0 0 24px 102px; color: var(--dim); font-size: 17px; }
 .ep-body p { margin: 0 0 12px; }
 li.playing .ep-num { color: var(--ink); }
