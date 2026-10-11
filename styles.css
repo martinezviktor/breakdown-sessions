@@ -260,27 +260,23 @@ li.playing .ep-num { color: var(--ink); }
 @media (min-width: 960px) {
   .hero {
     flex-direction: row;
-    gap: 72px;
-    text-align: left;
+    gap: 120px;
     max-width: 1080px;
     margin: 0 auto;
     padding: 8px 40px 56px;
   }
-  .logo { width: 44%; max-width: 460px; flex: none; }
-  .hero-text { align-items: flex-start; flex: 1; min-width: 0; }
-  .hero h1 { font-size: clamp(30px, 3.3vw, 44px); letter-spacing: .3em; margin-right: 0; }
-  .latest {
-    margin-top: 48px;
-    max-width: none;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    column-gap: 24px;
-    align-items: center;
+  /* Marco de cuadro del logo: filete fino, moldura gruesa y línea exterior. */
+  .logo {
+    width: 40%;
+    max-width: 420px;
+    flex: none;
+    padding: 18px;
+    border: 1px solid var(--ink);
+    box-shadow: 0 0 0 6px var(--bg), 0 0 0 16px var(--ink), 0 0 0 20px var(--bg), 0 0 0 23px var(--ink);
   }
-  .latest .eyebrow { grid-column: 1 / -1; margin-bottom: 18px; }
-  .latest .play-lg { grid-row: 2 / span 2; }
-  .latest h2 { margin: 0; align-self: end; }
-  .latest-meta { margin: 6px 0 0; align-self: start; }
+  .hero-text { align-items: center; text-align: center; flex: 1; min-width: 0; }
+  .hero h1 { font-size: clamp(30px, 3.3vw, 44px); letter-spacing: .3em; margin-right: -.3em; }
+  .latest { margin-top: 48px; }
 
   main {
     max-width: 1080px;
