@@ -31,7 +31,10 @@ const I18N = {
     play: "Reproducir",
     pause: "Pausar",
     theLatest: "el último episodio",
-    about1: "Breakdown Sessions es un podcast en español e inglés dedicado al análisis y la conversación sobre rock y metal.",
+    position: "Posición",
+    back15: "Retroceder 15 segundos",
+    fwd15: "Adelantar 15 segundos",
+    about1: "Breakdown Sessions es un podcast en inglés y español dedicado al análisis y la conversación sobre rock y metal.",
     about2: "En cada episodio exploramos canciones, álbumes y bandas desde distintos ángulos: composición, producción, letras, contexto y actualidad de la escena. También compartimos opiniones personales, experiencias como músicos y reflexiones sobre lo que está pasando en el género hoy.",
     about3: "Un espacio para hablar de música con criterio, sin exageraciones. Solo conversaciones honestas sobre las bandas y los sonidos que están marcando a esta generación.",
     byline: "Conduce Victor Martinez · Nuevos episodios cada semana",
@@ -50,13 +53,16 @@ const I18N = {
     play: "Play",
     pause: "Pause",
     theLatest: "the latest episode",
-    about1: "Breakdown Sessions is a podcast in Spanish and English devoted to analysis and conversation about rock and metal.",
+    position: "Position",
+    back15: "Back 15 seconds",
+    fwd15: "Forward 15 seconds",
+    about1: "Breakdown Sessions is a podcast in English and Spanish devoted to analysis and conversation about rock and metal.",
     about2: "In each episode we explore songs, albums, and bands from different angles: songwriting, production, lyrics, context, and what's happening in the scene. We also share personal opinions, our experience as musicians, and thoughts on where the genre is today.",
     about3: "A place to talk about music with judgment and without hype. Just honest conversations about the bands and sounds shaping this generation.",
     byline: "Hosted by Victor Martinez · New episodes every week",
   },
 };
-let lang = 'es';
+let lang = 'en';
 try {
   if (I18N[localStorage.getItem('lang')]) lang = localStorage.getItem('lang');
 } catch {}
@@ -307,6 +313,7 @@ $('year').textContent = new Date().getFullYear();
 function applyLang() {
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach((node) => (node.textContent = t(node.dataset.i18n)));
+  document.querySelectorAll('[data-i18n-label]').forEach((node) => node.setAttribute('aria-label', t(node.dataset.i18nLabel)));
   document.querySelectorAll('.lang button').forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
   if (!episodes.length) return;
   render();
