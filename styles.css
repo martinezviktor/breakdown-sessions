@@ -95,6 +95,7 @@ a { color: inherit; text-decoration: none; }
   text-align: center;
   padding: 8px 20px 56px;
 }
+.hero-text { display: flex; flex-direction: column; align-items: center; }
 .logo { width: 320px; max-width: 70vw; height: auto; display: block; }
 .hero h1 {
   margin: 0;
@@ -252,6 +253,45 @@ li.playing .ep-num { color: var(--ink); }
   .ep-date { display: none; }
   .ep-body { padding-left: 0; }
   section { padding: 56px 0; }
+}
+
+/* Computadora: portada partida en dos (logo grande | título y último episodio), contenido
+   más ancho, y Acerca y Escuchar lado a lado. */
+@media (min-width: 960px) {
+  .hero {
+    flex-direction: row;
+    gap: 72px;
+    text-align: left;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 8px 40px 56px;
+  }
+  .logo { width: 44%; max-width: 460px; flex: none; }
+  .hero-text { align-items: flex-start; flex: 1; min-width: 0; }
+  .hero h1 { font-size: clamp(30px, 3.3vw, 44px); letter-spacing: .3em; margin-right: 0; }
+  .latest {
+    margin-top: 48px;
+    max-width: none;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 24px;
+    align-items: center;
+  }
+  .latest .eyebrow { grid-column: 1 / -1; margin-bottom: 18px; }
+  .latest .play-lg { grid-row: 2 / span 2; }
+  .latest h2 { margin: 0; align-self: end; }
+  .latest-meta { margin: 6px 0 0; align-self: start; }
+
+  main {
+    max-width: 1080px;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 72px;
+  }
+  #episodios { grid-column: 1 / -1; }
+  .player-row { max-width: 1080px; padding: 0 118px 0 40px; }
+  .skull { right: 40px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
