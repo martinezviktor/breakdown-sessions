@@ -157,6 +157,20 @@ const flame = $('skull-flame');
 const pen = flame.getContext('2d', { willReadFrequently: true });
 let painting = false;
 
+// Los ojos y la nariz que quedan en pausa. La calavera se mueve un poco dentro del video, así
+// que al pausar se copian del cuadro en curso para que no brinquen; antes del primer play
+// salen de una imagen fija.
+const eyes = $('skull-eyes').getContext('2d');
+const firstEyes = new Image();
+firstEyes.onload = () => eyes.drawImage(firstEyes, 0, 0);
+firstEyes.src = 'assets/calavera-ojos.png';
+let painted = false;
+function snapEyes() {
+  if (!painted) return;
+  eyes.clearRect(0, 0, flame.width, flame.height);
+  eyes.drawImage(flame, 0, 0);
+}
+
 function paintFlame() {
   if (clip.readyState < 2) return;
   const { width: w, height: h } = flame;
@@ -173,14 +187,15 @@ function paintFlame() {
     px[i + 2] = 234;
   }
   pen.putImageData(frame, 0, 0);
+  painted = true;
 }
 
-// Pinta solo cuando el video entrega un cuadro nuevo (o en cada refresco, donde eso no exista).
+// Se pinta en cada refresco de pantalla. (requestVideoFrameCallback no sirve aquí: como el
+// video está invisible, el navegador no avisa de sus cuadros.)
 function loopFlame() {
   if (!playing()) return (painting = false);
   paintFlame();
-  if (clip.requestVideoFrameCallback) clip.requestVideoFrameCallback(loopFlame);
-  else requestAnimationFrame(loopFlame);
+  requestAnimationFrame(loopFlame);
 }
 
 clip.addEventListener('error', () => (skull.hidden = true));
@@ -197,6 +212,7 @@ audio.addEventListener('play', () => {
 const onStop = () => {
   syncButtons();
   clip.pause();
+  snapEyes();
   skull.classList.remove('lit');
 };
 audio.addEventListener('pause', onStop);
