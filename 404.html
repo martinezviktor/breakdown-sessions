@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Breakdown Sessions</title>
+<meta name="robots" content="noindex">
+<script>
+// Los enlaces de episodio del sitio anterior (/episode/<slug>) se llevan al episodio en la portada.
+var m = location.pathname.match(/^\/episode\/([^\/]+)/);
+location.replace(m ? '/?e=' + encodeURIComponent(m[1]) : '/');
+</script>
+</head>
+<body style="background:#000"></body>
+</html>

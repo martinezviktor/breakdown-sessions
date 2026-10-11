@@ -1,0 +1,261 @@
+:root {
+  --bg: #000;
+  --ink: #f2f0ea;
+  --dim: #8c8a84;
+  --line: #1f1f1f;
+  --frame: 14px;
+  --player: 74px;
+  --serif: 'EB Garamond', Garamond, 'Adobe Garamond Pro', 'Times New Roman', serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; background: var(--bg); scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: calc(100vh - var(--player));
+  border: var(--frame) solid var(--ink);
+  margin-bottom: var(--player);
+}
+
+a { color: inherit; text-decoration: none; }
+
+:focus-visible { outline: 1px solid var(--ink); outline-offset: 4px; }
+
+.eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.link {
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  padding: 0 0 3px;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.link:hover { color: var(--dim); border-color: var(--dim); }
+
+.play {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  display: inline-block;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0;
+}
+.play svg { width: 100%; height: 100%; display: block; fill: none; stroke: currentColor; overflow: visible; }
+.play .glyph { fill: currentColor; stroke: none; }
+.play:hover { color: #fff; }
+.play:hover svg circle:first-child { fill: #141414; }
+.play-lg { width: 96px; height: 96px; }
+
+/* Navegación */
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding: 28px 16px 0;
+  font-size: 13px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.nav a:hover { color: var(--ink); }
+
+/* Portada */
+.hero {
+  min-height: calc(100vh - 60px);
+  min-height: calc(100svh - 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 20px 56px;
+}
+.logo { width: 320px; max-width: 70vw; height: auto; display: block; }
+.hero h1 {
+  margin: 0;
+  font-size: clamp(22px, 5.2vw, 40px);
+  font-weight: 400;
+  letter-spacing: .34em;
+  margin-right: -.34em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+.tagline { margin: 10px 0 0; font-style: italic; color: var(--dim); }
+.latest { margin-top: 36px; max-width: 560px; }
+.latest h2 { margin: 8px 0 24px; font-size: 26px; font-weight: 400; line-height: 1.25; }
+.latest-meta { margin: 12px 0 0; font-size: 15px; color: var(--dim); }
+
+/* Secciones */
+main { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+section { padding: 72px 0; border-top: 1px solid var(--line); }
+section > .eyebrow { text-align: center; margin-bottom: 40px; }
+
+/* Episodios */
+.episodes { list-style: none; margin: 0; padding: 0; }
+.episodes li { border-bottom: 1px solid var(--line); }
+.ep-row { display: flex; align-items: center; gap: 16px; }
+.ep {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 16px 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ep-num, .ep-date { color: var(--dim); font-size: 15px; }
+.ep-date { white-space: nowrap; }
+.ep:hover .ep-title { font-style: italic; }
+.ep-body { padding: 0 0 24px 102px; color: var(--dim); font-size: 17px; }
+.ep-body p { margin: 0 0 12px; }
+li.playing .ep-num { color: var(--ink); }
+.status { text-align: center; color: var(--dim); font-style: italic; }
+
+/* Acerca */
+.prose { text-align: center; }
+.prose p { margin: 0 0 18px; }
+.byline { color: var(--dim); font-style: italic; margin-top: 32px; }
+
+/* Escuchar */
+.platforms { list-style: none; margin: 0; padding: 0; }
+.platforms li { border-bottom: 1px solid var(--line); }
+.platforms a { display: flex; justify-content: space-between; padding: 14px 0; }
+.pf { display: inline-flex; align-items: center; gap: 14px; }
+/* Los logos vienen en negro; se invierten para que queden del color del texto. */
+.pf img { width: 20px; height: 20px; filter: invert(.94); }
+.platforms a::after { content: '→'; color: var(--dim); }
+.platforms a:hover { font-style: italic; }
+
+.footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 13px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  border-top: 1px solid var(--line);
+}
+
+/* Reproductor */
+.player {
+  position: fixed;
+  left: var(--frame); right: var(--frame); bottom: 0;
+  height: var(--player);
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+.bar { height: 14px; margin-top: -7px; cursor: pointer; position: relative; }
+.bar::before, .fill { content: ''; position: absolute; left: 0; top: 6px; height: 1px; }
+.bar::before { right: 0; background: transparent; }
+.fill { width: 0; background: var(--ink); }
+.player-row {
+  max-width: 900px;
+  height: calc(100% - 7px);
+  margin: 0 auto;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 0 98px 0 20px;
+  position: relative;
+}
+.player-info { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+.player-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; }
+.player-time { color: var(--dim); font-size: 14px; font-variant-numeric: tabular-nums; }
+/* La calavera animada; el video ya viene recortado. Va más grande que la barra y se asoma por
+   arriba, con los ojos a media altura. En pausa el recorte deja ver solo los ojos en X y la
+   nariz; al dar play se abre desde ahí y aparece la llama. */
+.skull {
+  position: absolute;
+  right: 20px;
+  top: -34px;
+  width: 62px;
+  height: 94px;
+  pointer-events: none;
+  transform-origin: 50% 85%;
+  filter: drop-shadow(0 0 0 rgba(242, 240, 234, 0));
+  transition: filter .8s ease;
+}
+.skull.lit { filter: drop-shadow(0 0 7px rgba(242, 240, 234, .5)); animation: ignite .7s ease-out; }
+/* Los ojos y la nariz son una foto fija del video, siempre a la vista en pausa. */
+.skull-eyes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: url(#luma);
+  clip-path: polygon(27.5% 65.5%, 57.5% 66%, 57.5% 76%, 45% 79.5%, 36% 79.5%, 36% 75%, 27.5% 75%);
+}
+.skull.lit .skull-eyes { opacity: 0; transition: opacity 0s .7s; }
+/* La llama: al encender se abre desde la cara; al apagar solo se desvanece y luego se recoge. */
+.skull-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  clip-path: polygon(27.5% 65.5%, 57.5% 66%, 57.5% 76%, 45% 79.5%, 36% 79.5%, 36% 75%, 27.5% 75%);
+  transition: opacity .45s ease, clip-path 0s .45s;
+}
+.skull.lit .skull-clip {
+  opacity: 1;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 60% 100%, 0 100%, 0 60%, 0 30%);
+  transition: opacity .1s linear, clip-path .7s cubic-bezier(.2, .9, .3, 1);
+}
+.skull video { position: absolute; inset: 0; width: 100%; height: 100%; filter: url(#luma); transition: opacity .25s linear; }
+.skull video + video { opacity: 0; }
+.skull[hidden] { display: none; }
+@keyframes ignite {
+  0% { transform: scale(.82); }
+  55% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 520px) {
+  body { font-size: 18px; }
+  .logo { width: 240px; }
+  .nav { gap: 20px; font-size: 12px; }
+  .ep { grid-template-columns: 24px minmax(0, 1fr); }
+  .ep-row { gap: 12px; }
+  .player-row { gap: 12px; padding: 0 84px 0 12px; }
+  .skull { right: 12px; }
+  .player-title { font-size: 16px; }
+  .ep-date { display: none; }
+  .ep-body { padding-left: 0; }
+  section { padding: 56px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .skull.lit { animation: none; }
+}
+

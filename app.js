@@ -1,0 +1,206 @@
+// Los episodios se leen del feed de Captivate, así que el sitio se actualiza solo al publicar.
+const FEED = 'https://feeds.captivate.fm/breakdown-sessions/';
+const ITUNES = 'http://www.itunes.com/dtds/podcast-1.0.dtd';
+// El botón de play es un vinilo con surcos y etiqueta, igual en todos los tamaños.
+const RINGS = '<circle cx="32" cy="32" r="31" stroke-width="1.5"/><circle cx="32" cy="32" r="25" stroke-width=".6"/><circle cx="32" cy="32" r="20" stroke-width=".6"/><circle cx="32" cy="32" r="14" stroke-width="1.5"/>';
+const vinyl = (playing) =>
+  `<svg viewBox="0 0 64 64" aria-hidden="true">${RINGS}<path class="glyph" d="${playing ? 'M27 26h3.5v12H27zM33.5 26H37v12h-3.5z' : 'M29 26v12l10-6Z'}"/></svg>`;
+
+const $ = (id) => document.getElementById(id);
+const audio = $('audio');
+let episodes = [];
+let current = null;
+
+const fmtDate = (d) => d.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\./g, '');
+
+function fmtTime(s) {
+  if (!isFinite(s)) return '0:00';
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = Math.floor(s % 60);
+  return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(sec).padStart(2, '0');
+}
+
+// El feed trae HTML en la descripción: se conserva solo el texto, párrafo por párrafo.
+function paragraphs(html) {
+  const doc = new DOMParser().parseFromString(html || '', 'text/html');
+  const blocks = [...doc.body.querySelectorAll('p, li')].map((n) => n.textContent.trim()).filter(Boolean);
+  return blocks.length ? blocks : [doc.body.textContent.trim()].filter(Boolean);
+}
+
+function parse(xml) {
+  return [...xml.querySelectorAll('item')].map((item) => {
+    const text = (tag) => item.querySelector(tag)?.textContent.trim() || '';
+    const itunes = (tag) => item.getElementsByTagNameNS(ITUNES, tag)[0]?.textContent.trim() || '';
+    const full = text('title');
+    const num = itunes('episode') || (full.match(/#(\d+)/) || [])[1] || '';
+    const title = full.replace(/^Session\s*#\d+\s*/i, '').trim() || full;
+    return {
+      num,
+      title,
+      date: new Date(text('pubDate')),
+      duration: itunes('duration'),
+      src: item.querySelector('enclosure')?.getAttribute('url') || '',
+      slug: text('link').split('/').filter(Boolean).pop() || '',
+      body: paragraphs(text('description')),
+    };
+  });
+}
+
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function render() {
+  const list = $('episodes');
+  list.textContent = '';
+  episodes.forEach((ep, i) => {
+    const li = el('li');
+    const head = el('div', 'ep-row');
+    const play = el('button', 'play');
+    play.type = 'button';
+    play.addEventListener('click', () => toggleEpisode(i));
+
+    const row = el('button', 'ep');
+    row.type = 'button';
+    row.setAttribute('aria-expanded', 'false');
+    row.append(el('span', 'ep-num', ep.num), el('span', 'ep-title', ep.title), el('span', 'ep-date', fmtDate(ep.date)));
+
+    const body = el('div', 'ep-body');
+    body.hidden = true;
+    ep.body.forEach((p) => body.append(el('p', null, p)));
+    if (ep.duration) body.append(el('p', null, `Duración: ${ep.duration}`));
+
+    row.addEventListener('click', () => {
+      body.hidden = !body.hidden;
+      row.setAttribute('aria-expanded', String(!body.hidden));
+    });
+    head.append(play, row);
+    li.append(head, body);
+    list.append(li);
+  });
+
+  const latest = episodes[0];
+  $('latest-num').textContent = latest.title.startsWith('Session') ? 'Último episodio' : `Session n.º ${latest.num}`;
+  $('latest-title').textContent = latest.title;
+  $('latest-meta').textContent = [fmtDate(latest.date), latest.duration].filter(Boolean).join(' · ');
+  $('latest-play').addEventListener('click', () => toggleEpisode(0));
+  $('latest').hidden = false;
+
+  // El reproductor queda a la vista desde el inicio, con el último episodio listo.
+  load(0);
+  $('player').hidden = false;
+}
+
+function open(i, scroll) {
+  const li = $('episodes').children[i];
+  if (!li) return;
+  li.querySelector('.ep-body').hidden = false;
+  li.querySelector('.ep').setAttribute('aria-expanded', 'true');
+  if (scroll) li.scrollIntoView({ block: 'center' });
+}
+
+function load(i) {
+  const ep = episodes[i];
+  current = i;
+  audio.src = ep.src;
+  $('fill').style.width = '0';
+  $('player-title').textContent = `${ep.num} · ${ep.title}`;
+  $('player-time').textContent = ep.duration;
+  [...$('episodes').children].forEach((li, j) => li.classList.toggle('playing', j === i));
+  syncButtons();
+}
+
+function toggleEpisode(i) {
+  if (current !== i) load(i);
+  audio.paused ? audio.play() : audio.pause();
+}
+
+// Cada botón muestra pausa solo si su episodio es el que está sonando.
+function syncButtons() {
+  const on = !audio.paused;
+  const set = (btn, playing, name) => {
+    btn.innerHTML = vinyl(playing);
+    btn.setAttribute('aria-label', `${playing ? 'Pausar' : 'Reproducir'} ${name}`.trim());
+  };
+  set($('toggle'), on, '');
+  set($('latest-play'), on && current === 0, 'el último episodio');
+  [...$('episodes').children].forEach((li, j) => set(li.querySelector('.play'), on && current === j, `Session ${episodes[j].num}`));
+}
+
+function seek(ratio) {
+  if (isFinite(audio.duration)) audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration;
+}
+
+$('toggle').addEventListener('click', () => (audio.paused ? audio.play() : audio.pause()));
+// La calavera del reproductor: la llama se enciende y se mueve al dar play, y se apaga en pausa.
+// El video no empata al terminar, así que hay dos copias: poco antes del final arranca la otra
+// desde cero y se funden entre sí.
+const skull = $('skull');
+const clips = [...skull.querySelectorAll('video')];
+let front = 0;
+// Copia el cuadro actual a la foto fija de los ojos, para que al apagarse la llama no brinquen.
+const eyes = $('skull-eyes');
+const snapEyes = () => clips[front].readyState >= 2 && eyes.getContext('2d').drawImage(clips[front], 0, 0, eyes.width, eyes.height);
+clips[0].addEventListener('loadeddata', snapEyes);
+clips.forEach((clip, i) => {
+  clip.addEventListener('error', () => (skull.hidden = true));
+  clip.addEventListener('timeupdate', () => {
+    if (i !== front || !clip.duration || clip.currentTime < clip.duration - 0.9) return;
+    const next = clips[1 - i];
+    front = 1 - i;
+    next.currentTime = 0;
+    next.play().catch(() => {});
+    next.style.opacity = 1;
+    // La que sale espera a que la nueva ya esté visible; si se cruzan a medias, la calavera se ve gris.
+    setTimeout(() => (clip.style.opacity = 0), 450);
+  });
+});
+
+audio.addEventListener('play', () => {
+  syncButtons();
+  skull.classList.add('lit');
+  clips.forEach((clip, i) => (i === front || (clip.currentTime > 0 && !clip.ended)) && clip.play().catch(() => {}));
+});
+audio.addEventListener('pause', () => {
+  syncButtons();
+  clips.forEach((clip) => clip.pause());
+  snapEyes();
+  skull.classList.remove('lit');
+});
+audio.addEventListener('timeupdate', () => {
+  const ratio = audio.duration ? audio.currentTime / audio.duration : 0;
+  $('fill').style.width = ratio * 100 + '%';
+  $('bar').setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+  $('player-time').textContent = `${fmtTime(audio.currentTime)} / ${fmtTime(audio.duration)}`;
+});
+$('bar').addEventListener('click', (e) => {
+  const r = e.currentTarget.getBoundingClientRect();
+  seek((e.clientX - r.left) / r.width);
+});
+$('bar').addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') audio.currentTime += 15;
+  if (e.key === 'ArrowLeft') audio.currentTime -= 15;
+});
+
+$('year').textContent = new Date().getFullYear();
+
+fetch(FEED)
+  .then((r) => {
+    if (!r.ok) throw new Error(r.status);
+    return r.text();
+  })
+  .then((t) => {
+    episodes = parse(new DOMParser().parseFromString(t, 'text/xml'));
+    if (!episodes.length) throw new Error('feed vacío');
+    $('status').hidden = true;
+    render();
+    // Los enlaces viejos /episode/<slug> llegan aquí como ?e=<slug> (ver 404.html).
+    const slug = new URLSearchParams(location.search).get('e');
+    const i = episodes.findIndex((ep) => ep.slug === slug);
+    if (i >= 0) open(i, true);
+  })
+  .catch(() => {
+    $('status').textContent = 'No se pudieron cargar los episodios. Escúchalos en Spotify o Apple Podcasts.';
+  });

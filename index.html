@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breakdown Sessions — Podcast de rock y metal</title>
+<meta name="description" content="Breakdown Sessions es un podcast en español dedicado al análisis y conversación sobre rock y metal. Nuevos episodios cada semana.">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="Breakdown Sessions">
+<meta property="og:description" content="Podcast en español sobre rock y metal. Conversaciones honestas, con criterio.">
+<meta property="og:image" content="https://breakdownsessions.com/assets/portada.jpg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://breakdownsessions.com/">
+<link rel="alternate" type="application/rss+xml" title="Breakdown Sessions" href="https://feeds.captivate.fm/breakdown-sessions/">
+<link rel="icon" href="assets/icono.png">
+<link rel="apple-touch-icon" href="assets/icono.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="Principal">
+  <a href="#episodios">Episodios</a>
+  <a href="#acerca">Acerca</a>
+  <a href="#escuchar">Escuchar</a>
+</nav>
+
+<header class="hero">
+  <img class="logo" src="assets/logo.jpg" alt="Logo de Breakdown Sessions" width="220" height="220">
+  <h1>Breakdown Sessions</h1>
+  <p class="tagline">Rock y metal, con criterio.</p>
+
+  <div class="latest" id="latest" hidden>
+    <p class="eyebrow" id="latest-num"></p>
+    <h2 id="latest-title"></h2>
+    <button class="play play-lg" id="latest-play" type="button" aria-label="Reproducir el último episodio"></button>
+    <p class="latest-meta" id="latest-meta"></p>
+  </div>
+</header>
+
+<main>
+  <section id="episodios" aria-labelledby="t-episodios">
+    <h2 class="eyebrow" id="t-episodios">Episodios</h2>
+    <ol class="episodes" id="episodes"></ol>
+    <p class="status" id="status">Cargando episodios…</p>
+  </section>
+
+  <section id="acerca" aria-labelledby="t-acerca">
+    <h2 class="eyebrow" id="t-acerca">Acerca</h2>
+    <div class="prose">
+      <p>Breakdown Sessions es un podcast en español dedicado al análisis y la conversación sobre rock y metal.</p>
+      <p>En cada episodio exploramos canciones, álbumes y bandas desde distintos ángulos: composición, producción, letras, contexto y actualidad de la escena. También compartimos opiniones personales, experiencias como músicos y reflexiones sobre lo que está pasando en el género hoy.</p>
+      <p>Un espacio para hablar de música con criterio, sin exageraciones. Solo conversaciones honestas sobre las bandas y los sonidos que están marcando a esta generación.</p>
+      <p class="byline">Conduce Victor Martinez · Nuevos episodios cada semana</p>
+    </div>
+  </section>
+
+  <section id="escuchar" aria-labelledby="t-escuchar">
+    <h2 class="eyebrow" id="t-escuchar">Escuchar</h2>
+    <ul class="platforms">
+      <li><a href="https://open.spotify.com/show/2AbgpWdjDISZuOXRhizpqy" target="_blank" rel="noopener"><span class="pf"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/spotify.svg" alt="" width="20" height="20" loading="lazy">Spotify</span></a></li>
+      <li><a href="https://podcasts.apple.com/us/podcast/breakdown-sessions/id1877562839" target="_blank" rel="noopener"><span class="pf"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/applepodcasts.svg" alt="" width="20" height="20" loading="lazy">Apple Podcasts</span></a></li>
+      <li><a href="https://www.youtube.com/@BreakdownSessionsTV" target="_blank" rel="noopener"><span class="pf"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/youtube.svg" alt="" width="20" height="20" loading="lazy">YouTube</span></a></li>
+      <li><a href="https://music.amazon.com/podcasts/09eb91dd-6e34-4ccf-b4ac-9c2adba1c713/breakdown-sessions" target="_blank" rel="noopener"><span class="pf"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/amazonmusic.svg" alt="" width="20" height="20" loading="lazy">Amazon Music</span></a></li>
+      <li><a href="https://www.instagram.com/breakdown.sessions" target="_blank" rel="noopener"><span class="pf"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/instagram.svg" alt="" width="20" height="20" loading="lazy">Instagram</span></a></li>
+      <li><a href="https://feeds.captivate.fm/breakdown-sessions/" target="_blank" rel="noopener"><span class="pf"><img src="https://cdn.jsdelivr.net/npm/simple-icons@11/icons/rss.svg" alt="" width="20" height="20" loading="lazy">RSS</span></a></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="footer">© <span id="year">2026</span> Breakdown Sessions</footer>
+
+<!-- Convierte el negro del video en transparente para que la llama pueda asomarse sobre la página. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="luma" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="0 0 0 0 0.95  0 0 0 0 0.94  0 0 0 0 0.92  0.2126 0.7152 0.0722 0 0"/>
+  </filter>
+</svg>
+
+<div class="player" id="player" hidden>
+  <div class="bar" id="bar" role="slider" tabindex="0" aria-label="Posición" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+  <div class="player-row">
+    <button class="play" id="toggle" type="button" aria-label="Reproducir"></button>
+    <div class="player-info">
+      <span class="player-title" id="player-title"></span>
+      <span class="player-time" id="player-time">0:00</span>
+    </div>
+    <span class="skull" id="skull" aria-hidden="true"><canvas class="skull-eyes" id="skull-eyes" width="240" height="362"></canvas><span class="skull-clip"><video src="assets/calavera.mp4" muted playsinline preload="auto"></video><video src="assets/calavera.mp4" muted playsinline preload="auto"></video></span></span>
+  </div>
+  <audio id="audio" preload="none"></audio>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
