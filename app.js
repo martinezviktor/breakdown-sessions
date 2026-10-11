@@ -182,9 +182,9 @@ function paintFlame() {
     // si no queda un recuadro apenas visible alrededor de la calavera.
     const light = px[i];
     px[i + 3] = light <= 36 ? 0 : Math.min(255, (light - 36) * 1.3);
-    px[i] = 242;
-    px[i + 1] = 240;
-    px[i + 2] = 234;
+    px[i] = 237;
+    px[i + 1] = 233;
+    px[i + 2] = 225;
   }
   pen.putImageData(frame, 0, 0);
   painted = true;

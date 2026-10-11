@@ -1,6 +1,6 @@
 :root {
   --bg: #000;
-  --ink: #f2f0ea;
+  --ink: #ede9e1;
   --dim: #8c8a84;
   --line: #1f1f1f;
   --frame: 14px;
@@ -213,10 +213,10 @@ li.playing .ep-num { color: var(--ink); }
   height: 94px;
   pointer-events: none;
   transform-origin: 50% 85%;
-  filter: drop-shadow(0 0 0 rgba(242, 240, 234, 0));
+  filter: drop-shadow(0 0 0 rgba(237, 233, 225, 0));
   transition: filter .8s ease;
 }
-.skull.lit { filter: drop-shadow(0 0 7px rgba(242, 240, 234, .5)); animation: ignite .7s ease-out; }
+.skull.lit { filter: drop-shadow(0 0 7px rgba(237, 233, 225, .5)); animation: ignite .7s ease-out; }
 /* Los ojos y la nariz son una imagen fija, siempre a la vista en pausa. */
 .skull-eyes {
   position: absolute;
