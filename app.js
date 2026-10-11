@@ -135,30 +135,25 @@ function seek(ratio) {
 
 $('toggle').addEventListener('click', () => (audio.paused ? audio.play() : audio.pause()));
 // La calavera del reproductor: la llama se enciende y se mueve al dar play, y se apaga en pausa.
-// Los videos no se muestran: cada cuadro se pinta en un lienzo volviendo transparente el negro,
-// para que la llama pueda asomarse sobre la página (funciona igual en todos los navegadores).
-// El video no empata al terminar, así que hay dos copias: poco antes del final arranca la otra
-// desde cero y se funden entre sí.
+// El video (un bucle que ya empata solo) no se muestra: cada cuadro se pinta en un lienzo
+// volviendo transparente el negro, para que la llama pueda asomarse sobre la página.
 const skull = $('skull');
-const clips = [...skull.querySelectorAll('video')];
+const clip = skull.querySelector('video');
 const flame = $('skull-flame');
 const pen = flame.getContext('2d', { willReadFrequently: true });
-const FADE = 400;
-let front = 0;
-let fadeStart = -Infinity;
 let painting = false;
 
 function paintFlame() {
-  const mix = Math.min(1, (performance.now() - fadeStart) / FADE);
+  if (clip.readyState < 2) return;
   const { width: w, height: h } = flame;
-  pen.globalAlpha = 1;
-  if (mix < 1) pen.drawImage(clips[1 - front], 0, 0, w, h);
-  pen.globalAlpha = mix;
-  if (clips[front].readyState >= 2) pen.drawImage(clips[front], 0, 0, w, h);
+  pen.drawImage(clip, 0, 0, w, h);
   const frame = pen.getImageData(0, 0, w, h);
   const px = frame.data;
   for (let i = 0; i < px.length; i += 4) {
-    px[i + 3] = px[i];
+    // El negro del video nunca es negro puro: por debajo del umbral se descarta del todo,
+    // si no queda un recuadro apenas visible alrededor de la calavera.
+    const light = px[i];
+    px[i + 3] = light <= 36 ? 0 : Math.min(255, (light - 36) * 1.3);
     px[i] = 242;
     px[i + 1] = 240;
     px[i + 2] = 234;
@@ -166,28 +161,20 @@ function paintFlame() {
   pen.putImageData(frame, 0, 0);
 }
 
+// Pinta solo cuando el video entrega un cuadro nuevo (o en cada refresco, donde eso no exista).
 function loopFlame() {
   if (audio.paused) return (painting = false);
   paintFlame();
-  requestAnimationFrame(loopFlame);
+  if (clip.requestVideoFrameCallback) clip.requestVideoFrameCallback(loopFlame);
+  else requestAnimationFrame(loopFlame);
 }
 
-clips.forEach((clip, i) => {
-  clip.addEventListener('error', () => (skull.hidden = true));
-  clip.addEventListener('timeupdate', () => {
-    if (i !== front || !clip.duration || clip.currentTime < clip.duration - 0.9) return;
-    const next = clips[1 - i];
-    front = 1 - i;
-    next.currentTime = 0;
-    next.play().catch(() => {});
-    fadeStart = performance.now();
-  });
-});
+clip.addEventListener('error', () => (skull.hidden = true));
 
 audio.addEventListener('play', () => {
   syncButtons();
   skull.classList.add('lit');
-  clips.forEach((clip, i) => (i === front || (clip.currentTime > 0 && !clip.ended)) && clip.play().catch(() => {}));
+  clip.play().catch(() => {});
   if (!painting) {
     painting = true;
     requestAnimationFrame(loopFlame);
@@ -195,7 +182,7 @@ audio.addEventListener('play', () => {
 });
 audio.addEventListener('pause', () => {
   syncButtons();
-  clips.forEach((clip) => clip.pause());
+  clip.pause();
   skull.classList.remove('lit');
 });
 audio.addEventListener('timeupdate', () => {
