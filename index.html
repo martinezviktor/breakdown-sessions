@@ -21,7 +21,7 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
 <link rel="apple-touch-icon" href="assets/icono.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -84,14 +84,13 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
   <div class="player-row">
     <div class="controls">
       <button class="skip" id="back15" type="button" aria-label="Retroceder 15 segundos"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path class="arc" d="M12 6a6.75 6.75 0 1 1-6.75 6.75"/><path class="tip" d="M12.4 2.2 7.4 6l5 3.8z"/></g><text x="12" y="15.4">15</text></svg></button>
-      <button class="play" id="toggle" type="button" aria-label="Reproducir"></button>
+      <button class="skull" id="toggle" type="button" aria-label="Reproducir"><canvas class="skull-eyes" id="skull-eyes" width="240" height="362"></canvas><span class="skull-clip"><canvas id="skull-flame" width="240" height="362"></canvas><video src="assets/calavera.mp4" muted loop playsinline preload="auto"></video></span><svg class="skull-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v18l15-9z"/></svg></button>
       <button class="skip" id="fwd15" type="button" aria-label="Adelantar 15 segundos"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><path class="arc" d="M12 6a6.75 6.75 0 1 1-6.75 6.75"/><path class="tip" d="M12.4 2.2 7.4 6l5 3.8z"/></g><text x="12" y="15.4">15</text></svg></button>
     </div>
     <div class="player-info">
       <span class="player-title" id="player-title"></span>
       <span class="player-time" id="player-time">0:00</span>
     </div>
-    <span class="skull" id="skull" aria-hidden="true"><canvas class="skull-eyes" id="skull-eyes" width="240" height="362"></canvas><span class="skull-clip"><canvas id="skull-flame" width="240" height="362"></canvas><video src="assets/calavera.mp4" muted loop playsinline preload="auto"></video></span></span>
   </div>
   <audio id="audio" preload="none"></audio>
 </div>

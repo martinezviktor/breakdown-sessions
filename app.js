@@ -138,7 +138,7 @@ function syncButtons() {
     btn.innerHTML = vinyl(playing);
     btn.setAttribute('aria-label', `${playing ? 'Pausar' : 'Reproducir'} ${name}`.trim());
   };
-  set($('toggle'), on, '');
+  $('toggle').setAttribute('aria-label', on ? 'Pausar' : 'Reproducir');
   set($('latest-play'), on && current === 0, 'el último episodio');
   [...$('episodes').children].forEach((li, j) => set(li.querySelector('.play'), on && current === j, `Session ${episodes[j].num}`));
 }
@@ -160,10 +160,11 @@ if ('mediaSession' in navigator) {
   navigator.mediaSession.setActionHandler('seekbackward', () => skip(-15));
   navigator.mediaSession.setActionHandler('seekforward', () => skip(15));
 }
-// La calavera del reproductor: la llama se enciende y se mueve al dar play, y se apaga en pausa.
+// La calavera es el botón de play del reproductor: al tocarla se prende en llamas y suena; al
+// tocarla otra vez se apaga.
 // El video (un bucle que ya empata solo) no se muestra: cada cuadro se pinta en un lienzo
 // volviendo transparente el negro, para que la llama pueda asomarse sobre la página.
-const skull = $('skull');
+const skull = $('toggle');
 const clip = skull.querySelector('video');
 const flame = $('skull-flame');
 const pen = flame.getContext('2d', { willReadFrequently: true });
@@ -210,7 +211,6 @@ function loopFlame() {
   requestAnimationFrame(loopFlame);
 }
 
-clip.addEventListener('error', () => (skull.hidden = true));
 
 audio.addEventListener('play', () => {
   syncButtons();
