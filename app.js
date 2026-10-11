@@ -110,16 +110,30 @@ function load(i) {
   $('player-time').textContent = ep.duration;
   [...$('episodes').children].forEach((li, j) => li.classList.toggle('playing', j === i));
   syncButtons();
+  // Pantalla de bloqueo y controles del sistema: muestran el episodio en vez de un audio sin nombre.
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: ep.title,
+      artist: 'Breakdown Sessions',
+      album: `Session ${ep.num}`,
+      artwork: [{ src: new URL('assets/icono-512.png', location.href).href, sizes: '512x512', type: 'image/png' }],
+    });
+  }
 }
+
+// Al terminar un episodio el navegador no lo marca como pausado, así que se mira también `ended`.
+const playing = () => !audio.paused && !audio.ended;
+// play() se rechaza si llega otra orden antes de que arranque; no es un error que mostrar.
+const toggle = () => (playing() ? audio.pause() : audio.play().catch(() => {}));
 
 function toggleEpisode(i) {
   if (current !== i) load(i);
-  audio.paused ? audio.play() : audio.pause();
+  toggle();
 }
 
 // Cada botón muestra pausa solo si su episodio es el que está sonando.
 function syncButtons() {
-  const on = !audio.paused;
+  const on = playing();
   const set = (btn, playing, name) => {
     btn.innerHTML = vinyl(playing);
     btn.setAttribute('aria-label', `${playing ? 'Pausar' : 'Reproducir'} ${name}`.trim());
@@ -133,7 +147,7 @@ function seek(ratio) {
   if (isFinite(audio.duration)) audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration;
 }
 
-$('toggle').addEventListener('click', () => (audio.paused ? audio.play() : audio.pause()));
+$('toggle').addEventListener('click', toggle);
 // La calavera del reproductor: la llama se enciende y se mueve al dar play, y se apaga en pausa.
 // El video (un bucle que ya empata solo) no se muestra: cada cuadro se pinta en un lienzo
 // volviendo transparente el negro, para que la llama pueda asomarse sobre la página.
@@ -163,7 +177,7 @@ function paintFlame() {
 
 // Pinta solo cuando el video entrega un cuadro nuevo (o en cada refresco, donde eso no exista).
 function loopFlame() {
-  if (audio.paused) return (painting = false);
+  if (!playing()) return (painting = false);
   paintFlame();
   if (clip.requestVideoFrameCallback) clip.requestVideoFrameCallback(loopFlame);
   else requestAnimationFrame(loopFlame);
@@ -180,16 +194,22 @@ audio.addEventListener('play', () => {
     requestAnimationFrame(loopFlame);
   }
 });
-audio.addEventListener('pause', () => {
+const onStop = () => {
   syncButtons();
   clip.pause();
   skull.classList.remove('lit');
-});
+};
+audio.addEventListener('pause', onStop);
+audio.addEventListener('ended', onStop);
+// Si el audio falla al cargar, los botones vuelven a play en vez de quedarse en pausa.
+audio.addEventListener('error', onStop);
 audio.addEventListener('timeupdate', () => {
   const ratio = audio.duration ? audio.currentTime / audio.duration : 0;
   $('fill').style.width = ratio * 100 + '%';
   $('bar').setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-  $('player-time').textContent = `${fmtTime(audio.currentTime)} / ${fmtTime(audio.duration)}`;
+  // Mientras el audio aún no informa su duración, se muestra la del feed.
+  const total = isFinite(audio.duration) ? fmtTime(audio.duration) : episodes[current].duration;
+  $('player-time').textContent = `${fmtTime(audio.currentTime)} / ${total}`;
 });
 $('bar').addEventListener('click', (e) => {
   const r = e.currentTarget.getBoundingClientRect();
