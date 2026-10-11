@@ -5,6 +5,9 @@ const ITUNES = 'http://www.itunes.com/dtds/podcast-1.0.dtd';
 const RINGS = '<circle cx="32" cy="32" r="31" stroke-width="1.5"/><circle cx="32" cy="32" r="25" stroke-width=".6"/><circle cx="32" cy="32" r="20" stroke-width=".6"/><circle cx="32" cy="32" r="14" stroke-width="1.5"/>';
 const vinyl = (playing) =>
   `<svg viewBox="0 0 64 64" aria-hidden="true">${RINGS}<path class="glyph" d="${playing ? 'M27 26h3.5v12H27zM33.5 26H37v12h-3.5z' : 'M29 26v12l10-6Z'}"/></svg>`;
+// En la lista de episodios el play es solo el triángulo; el vinilo queda para el último episodio.
+const glyph = (playing) =>
+  `<svg viewBox="0 0 24 24" aria-hidden="true"><path class="glyph" d="${playing ? 'M6 4h4.5v16H6zM13.5 4H18v16h-4.5z' : 'M6 3v18l15-9z'}"/></svg>`;
 
 const $ = (id) => document.getElementById(id);
 const audio = $('audio');
@@ -70,6 +73,8 @@ function render() {
 
     const body = el('div', 'ep-body');
     body.hidden = true;
+    // En celular la fecha no cabe en el renglón, así que abre la descripción.
+    body.append(el('p', 'ep-when', `Publicado el ${fmtDate(ep.date)}`));
     ep.body.forEach((p) => body.append(el('p', null, p)));
     if (ep.duration) body.append(el('p', null, `Duración: ${ep.duration}`));
 
@@ -140,7 +145,7 @@ function toggleEpisode(i) {
 function syncButtons() {
   const on = playing();
   const set = (btn, playing, name) => {
-    btn.innerHTML = vinyl(playing);
+    btn.innerHTML = btn.classList.contains('play-lg') ? vinyl(playing) : glyph(playing);
     btn.setAttribute('aria-label', `${playing ? 'Pausar' : 'Reproducir'} ${name}`.trim());
   };
   $('toggle').setAttribute('aria-label', on ? 'Pausar' : 'Reproducir');
