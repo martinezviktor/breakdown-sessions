@@ -5,9 +5,20 @@
 <title>Breakdown Sessions</title>
 <meta name="robots" content="noindex">
 <script>
-// Los enlaces de episodio del sitio anterior (/episode/<slug>) se llevan al episodio en la portada.
-var m = location.pathname.match(/^\/episode\/([^\/]+)/);
-location.replace(m ? '/?e=' + encodeURIComponent(m[1]) : '/');
+// Enlaces del sitio anterior (Captivate) que siguen circulando.
+var path = location.pathname.replace(/\/+$/, '').toLowerCase();
+var links = {
+  '/spotify': 'https://open.spotify.com/show/2AbgpWdjDISZuOXRhizpqy',
+  '/apple': 'https://podcasts.apple.com/us/podcast/breakdown-sessions/id1877562839',
+  '/amazon': 'https://music.amazon.com/podcasts/09eb91dd-6e34-4ccf-b4ac-9c2adba1c713/breakdown-sessions',
+  '/rssfeed': 'https://feeds.captivate.fm/breakdown-sessions/'
+};
+// Los de episodio (/episode/<slug>) abren ese episodio en la portada.
+var episode = path.match(/^\/episode\/([^\/]+)/);
+location.replace(
+  links[path] ||
+  (episode ? '/?e=' + encodeURIComponent(episode[1]) : path.indexOf('/episodes') === 0 ? '/#episodios' : '/')
+);
 </script>
 </head>
 <body style="background:#000"></body>
