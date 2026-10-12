@@ -22,10 +22,11 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1012g">
+<link rel="stylesheet" href="styles.css?v=1012h">
 </head>
 <body>
 
+<div class="page" id="page">
 <nav class="nav" aria-label="Main">
   <a href="#episodios" data-i18n="navEpisodes">Episodes</a>
   <a href="#acerca" data-i18n="navAbout">About</a>
@@ -85,6 +86,7 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
   </div>
   <div>© <span id="year">2026</span> Breakdown Sessions</div>
 </footer>
+</div>
 
 <div class="player" id="player" hidden>
   <div class="bar" id="bar" role="slider" tabindex="0" aria-label="Position" data-i18n-label="position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div>
@@ -100,6 +102,6 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
   <audio id="audio" preload="none"></audio>
 </div>
 
-<script src="app.js?v=1012g"></script>
+<script src="app.js?v=1012h"></script>
 </body>
 </html>

@@ -16,8 +16,21 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; background: var(--bg); scrollbar-width: none; }
-html::-webkit-scrollbar { display: none; }
+/* La página en sí no se desplaza: lo hace .page, dentro del recuadro. Así en el iPhone el
+   contenido no asoma por la barra de estado ni por la franja de abajo. */
+html, body { height: 100%; overflow: hidden; }
+html { background: var(--bg); }
+.page {
+  position: fixed;
+  inset: var(--frame) var(--frame) calc(var(--frame) + var(--player) + var(--extra) + var(--safe));
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.page::-webkit-scrollbar { display: none; }
 
 body {
   margin: 0;
@@ -27,7 +40,6 @@ body {
   font-size: 19px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  padding: var(--frame) var(--frame) calc(var(--frame) + var(--player) + var(--extra) + var(--safe));
 }
 
 /* Recuadro blanco fijo a la pantalla: el contenido se desplaza por dentro. Se cierra justo
@@ -378,7 +390,7 @@ li.playing .ep-num { color: var(--ink); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  .page { scroll-behavior: auto; }
   .skull.lit { animation: none; }
 }
 
