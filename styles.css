@@ -4,7 +4,7 @@
   --dim: #8c8a84;
   --line: #1f1f1f;
   --frame: 14px;
-  --player: 172px;
+  --player: 66px;
   /* Alto extra que ocupa el recuadro propio del reproductor (0 si no lleva). */
   --extra: 0px;
   /* Zona que el iPhone reserva abajo (esquinas redondeadas y barra de inicio). */
@@ -218,32 +218,45 @@ li.playing .ep-num { color: var(--ink); }
   position: fixed;
   left: 0; right: 0; bottom: 0;
   height: calc(var(--player) + var(--extra) + var(--safe));
-  padding-bottom: var(--safe);
   z-index: 10;
   background: var(--bg);
-}
-.bar { height: 14px; cursor: pointer; position: relative; }
-.bar::before, .fill { content: ''; position: absolute; left: 0; top: 0; height: 2px; }
-.bar::before { right: 0; background: var(--line); }
-.fill { width: 0; background: var(--ink); }
-/* Todo centrado en columna: título arriba (una línea), controles, y el tiempo debajo. El hueco
-   entre el título y los controles es donde arde la llama al sonar. */
-.player-row {
-  max-width: 900px;
-  height: calc(100% - 14px);
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  animation: rise .35s ease-out;
+}
+.player[hidden] { display: none; }
+@keyframes rise {
+  from { transform: translateY(100%); }
+}
+/* La línea de progreso va abajo, debajo de los controles. */
+.bar { order: 2; height: 10px; flex: none; cursor: pointer; position: relative; }
+.bar::before, .fill { content: ''; position: absolute; left: 0; top: 4px; height: 2px; }
+.bar::before { right: 0; background: var(--line); }
+.fill { width: 0; background: var(--ink); }
+/* Un solo renglón. En celular: play, título con el tiempo debajo, y los saltos de 15 s. La
+   llama sube por encima del renglón al sonar. */
+.player-row {
+  width: 100%;
+  max-width: 1080px;
+  height: 48px;
+  flex: none;
+  margin: 0 auto;
+  padding: 0 22px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: 'play title back fwd' 'play time back fwd';
   align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 8px;
+  column-gap: 12px;
   position: relative;
 }
-/* Los saltos y el play van centrados en la misma línea. */
-.controls { display: flex; align-items: center; gap: 30px; flex: none; margin: auto 0 10px; }
+.controls { display: contents; }
+#toggle { grid-area: play; }
+#back15 { grid-area: back; }
+#fwd15 { grid-area: fwd; }
 .skip {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   flex: none;
   background: none;
   border: 0;
@@ -256,16 +269,16 @@ li.playing .ep-num { color: var(--ink); }
 .skip .arc { fill: none; stroke: currentColor; stroke-width: 1.1; }
 .skip .tip { fill: currentColor; }
 .skip text { fill: currentColor; font-family: var(--serif); font-size: 6.6px; text-anchor: middle; }
-.player-title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 20px; line-height: 1.3; text-align: center; }
-.player-time { color: var(--dim); font-size: 15px; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.player-title { grid-area: title; align-self: end; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 17px; line-height: 1.25; }
+.player-time { grid-area: time; align-self: start; color: var(--dim); font-size: 13px; line-height: 1.25; font-variant-numeric: tabular-nums; }
 /* El botón de play. En pausa solo se ve el triángulo. Al sonar aparece la calavera en llamas
    en su lugar: la cara queda donde estaba el triángulo y la llama sube por encima del botón. */
 .skull {
-  --art-w: 76px;
-  --art-h: 114px;
+  --art-w: 40px;
+  --art-h: 60px;
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 44px;
+  height: 44px;
   flex: none;
   background: none;
   border: 0;
@@ -281,8 +294,8 @@ li.playing .ep-num { color: var(--ink); }
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   transform: translate(-42%, -50%);
   fill: var(--ink);
   transition: opacity .25s ease;
@@ -327,32 +340,6 @@ li.playing .ep-num { color: var(--ink); }
   .ep-when { display: block; font-family: var(--label); font-weight: 500; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
   .ep-body { padding-left: 0; }
   section { padding: 56px 0; }
-}
-
-/* Celular y pantallas angostas: el reproductor va en dos renglones (título y tiempo arriba,
-   controles centrados abajo). */
-@media (max-width: 700px) {
-  .player-row { padding: 0 16px 6px; }
-  .player-title { font-size: 19px; }
-}
-
-/* Computadora y tableta: el reproductor va en un solo renglón y más bajo, con todo centrado a
-   la misma altura. Título a la izquierda, controles al centro, tiempo a la derecha. La llama
-   es más chica para caber sin salirse de la barra. */
-@media (min-width: 701px) {
-  :root { --player: 100px; }
-  .player-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    align-items: center;
-    column-gap: 32px;
-    padding-bottom: 0;
-  }
-  .player-title { justify-self: start; text-align: left; }
-  .player-time { justify-self: end; }
-  .controls { margin: 0; gap: 26px; }
-  .skull { --art-w: 56px; --art-h: 84px; width: 52px; height: 52px; }
-  .skull-play { width: 26px; height: 26px; }
 }
 
 /* Computadora: portada partida en dos (logo grande | título y último episodio), contenido
@@ -476,3 +463,32 @@ li.playing .ep-num { color: var(--ink); }
   pointer-events: none;
 }
 .bar { margin: 0 calc(var(--pb) + var(--px) + 10px); }
+
+/* Computadora y tableta: mismo renglón, con el título a la izquierda, los controles al centro
+   y el tiempo a la derecha. */
+@media (min-width: 701px) {
+  .player-row {
+    grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
+    grid-template-areas: 'title back play fwd time';
+    column-gap: 26px;
+    padding: 0 40px;
+  }
+  .player-title { align-self: center; font-size: 18px; }
+  .player-time { align-self: center; justify-self: end; font-size: 14px; }
+  .skull { --art-w: 44px; --art-h: 66px; }
+}
+
+/* El reproductor no aparece hasta que se le da play a un episodio. Mientras tanto, el
+   recuadro de la página cierra abajo. */
+html:not(.has-player) { --player: 0px; --extra: 0px; }
+
+/* Celular: se mantiene la distribución centrada (título arriba, 15 s / play / 15 s, tiempo
+   abajo), en versión baja. El hueco sobre los controles es para la llama. */
+@media (max-width: 700px) {
+  html.has-player { --player: 110px; }
+  .player-row { display: flex; flex-direction: column; align-items: center; height: auto; padding: 0 22px; }
+  .player-title { align-self: center; max-width: 100%; text-align: center; }
+  .controls { display: flex; align-items: center; gap: 30px; margin-top: 18px; }
+  .player-time { align-self: center; }
+  .skull { --art-w: 44px; --art-h: 66px; }
+}

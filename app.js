@@ -163,6 +163,8 @@ function open(i, scroll) {
 function load(i) {
   const ep = episodes[i];
   current = i;
+  document.documentElement.classList.add('has-player');
+  $('player').hidden = false;
   audio.src = ep.src;
   $('fill').style.width = '0';
   $('player-title').textContent = `${ep.num} · ${ep.title}`;
@@ -341,10 +343,9 @@ fetch(FEED)
     if (!episodes.length) throw new Error('feed vacío');
     $('status').hidden = true;
     render();
-    // El reproductor queda a la vista desde el inicio, con el último episodio listo.
+    // El reproductor no se muestra ni carga nada hasta que se le da play a un episodio.
     $('latest-play').addEventListener('click', () => toggleEpisode(0));
-    load(0);
-    $('player').hidden = false;
+    syncButtons();
     // Los enlaces viejos /episode/<slug> llegan aquí como ?e=<slug> (ver 404.html).
     const slug = new URLSearchParams(location.search).get('e');
     const i = episodes.findIndex((ep) => ep.slug === slug);
