@@ -22,7 +22,7 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=1012h">
+<link rel="stylesheet" href="styles.css?v=1012j">
 </head>
 <body>
 
@@ -98,10 +98,15 @@ if (location.protocol === 'http:' && /(^|\.)breakdownsessions\.com$/.test(locati
       <button class="skip" id="fwd15" type="button" aria-label="Forward 15 seconds" data-i18n-label="fwd15"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(24 0) scale(-1 1)"><path class="arc" d="M12 6a6.75 6.75 0 1 1-6.75 6.75"/><path class="tip" d="M12.4 2.2 7.4 6l5 3.8z"/></g><text x="12" y="15.4">15</text></svg></button>
     </div>
     <span class="player-time" id="player-time">0:00</span>
+    <button class="fold" id="fold" type="button" aria-label="Hide player" data-i18n-label="fold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
+  </div>
+  <div class="mini">
+    <button class="mini-play" id="mini-play" type="button" aria-label="Play"></button>
+    <button class="mini-open" id="mini-open" type="button" aria-label="Show player" data-i18n-label="unfold"><span id="mini-title"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg></button>
   </div>
   <audio id="audio" preload="none"></audio>
 </div>
 
-<script src="app.js?v=1012h"></script>
+<script src="app.js?v=1012j"></script>
 </body>
 </html>

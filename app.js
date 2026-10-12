@@ -34,6 +34,8 @@ const I18N = {
     position: "Posición",
     back15: "Retroceder 15 segundos",
     fwd15: "Adelantar 15 segundos",
+    fold: "Bajar reproductor",
+    unfold: "Subir reproductor",
     about1: "Breakdown Sessions es un podcast en inglés y español dedicado al análisis y la conversación sobre rock y metal.",
     about2: "En cada episodio exploramos canciones, álbumes y bandas desde distintos ángulos: composición, producción, letras, contexto y actualidad de la escena. También compartimos opiniones personales, experiencias como músicos y reflexiones sobre lo que está pasando en el género hoy.",
     about3: "Un espacio para hablar de música con criterio, sin exageraciones. Solo conversaciones honestas sobre las bandas y los sonidos que están marcando a esta generación.",
@@ -56,6 +58,8 @@ const I18N = {
     position: "Position",
     back15: "Back 15 seconds",
     fwd15: "Forward 15 seconds",
+    fold: "Hide player",
+    unfold: "Show player",
     about1: "Breakdown Sessions is a podcast in English and Spanish devoted to analysis and conversation about rock and metal.",
     about2: "In each episode we explore songs, albums, and bands from different angles: songwriting, production, lyrics, context, and what's happening in the scene. We also share personal opinions, our experience as musicians, and thoughts on where the genre is today.",
     about3: "A place to talk about music with judgment and without hype. Just honest conversations about the bands and sounds shaping this generation.",
@@ -163,11 +167,10 @@ function open(i, scroll) {
 function load(i) {
   const ep = episodes[i];
   current = i;
-  document.documentElement.classList.add('has-player');
-  $('player').hidden = false;
   audio.src = ep.src;
   $('fill').style.width = '0';
   $('player-title').textContent = `${ep.num} · ${ep.title}`;
+  $('mini-title').textContent = `${ep.num} · ${ep.title}`;
   $('player-time').textContent = ep.duration;
   [...$('episodes').children].forEach((li, j) => li.classList.toggle('playing', j === i));
   syncButtons();
@@ -187,10 +190,18 @@ const playing = () => !audio.paused && !audio.ended;
 // play() se rechaza si llega otra orden antes de que arranque; no es un error que mostrar.
 const toggle = () => (playing() ? audio.pause() : audio.play().catch(() => {}));
 
+// El reproductor aparece al dar play a un episodio. La flecha lo baja a una tira delgada con
+// el título (el audio sigue sonando) y desde la tira se vuelve a subir.
 function toggleEpisode(i) {
   if (current !== i) load(i);
+  document.documentElement.classList.add('has-player');
+  $('player').hidden = false;
   toggle();
 }
+const fold = (folded) => document.documentElement.classList.toggle('player-min', folded);
+$('fold').addEventListener('click', () => fold(true));
+$('mini-open').addEventListener('click', () => fold(false));
+$('mini-play').addEventListener('click', () => toggle());
 
 // Cada botón muestra pausa solo si su episodio es el que está sonando.
 function syncButtons() {
@@ -200,6 +211,8 @@ function syncButtons() {
     btn.setAttribute('aria-label', `${playing ? t('pause') : t('play')} ${name}`.trim());
   };
   $('toggle').setAttribute('aria-label', on ? t('pause') : t('play'));
+  $('mini-play').innerHTML = glyph(on);
+  $('mini-play').setAttribute('aria-label', on ? t('pause') : t('play'));
   set($('latest-play'), on && current === 0, t('theLatest'));
   [...$('episodes').children].forEach((li, j) => set(li.querySelector('.play'), on && current === j, `Session ${episodes[j].num}`));
 }

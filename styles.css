@@ -518,3 +518,72 @@ body::after {
   z-index: 9;
   pointer-events: none;
 }
+
+/* La flecha que baja el reproductor, arriba a la derecha dentro del recuadro. */
+.fold {
+  position: absolute;
+  right: 16px;
+  top: -2px;
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+  background: none;
+  border: 0;
+  color: var(--dim);
+  cursor: pointer;
+}
+.fold:hover, .mini-open:hover svg { color: var(--ink); }
+.fold svg, .mini-open svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 700px) {
+  .player-title { max-width: calc(100% - 64px); }
+}
+@media (min-width: 701px) {
+  .player-row { padding-right: 76px; padding-left: 76px; }
+  .fold { right: 30px; top: 50%; transform: translateY(-50%); }
+}
+
+/* Reproductor bajado: una tira delgada con play, el título y la flecha para subirlo. Lleva
+   una sola línea de recuadro. */
+.mini { display: none; }
+html.player-min.has-player { --player: 30px; --px: 0px; }
+html.player-min .player::before { outline: none; }
+html.player-min .player-row, html.player-min .bar { display: none; }
+html.player-min .mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 30px;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.mini-play { width: 22px; height: 22px; flex: none; padding: 3px; background: none; border: 0; color: var(--ink); cursor: pointer; }
+.mini-play svg { width: 100%; height: 100%; display: block; fill: currentColor; }
+.mini-open {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+.mini-open span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-open svg { width: 20px; height: 20px; flex: none; color: var(--dim); }
