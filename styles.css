@@ -492,3 +492,17 @@ html:not(.has-player) { --player: 0px; --extra: 0px; }
   .player-time { align-self: center; }
   .skull { --art-w: 44px; --art-h: 66px; }
 }
+
+/* Fondo negro bajo el recuadro de la página. En el iPhone el recuadro cierra por encima de la
+   zona de la barra de inicio; sin esto, el contenido se veía pasar por esa franja. */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--player) + var(--extra) + var(--safe));
+  background: var(--bg);
+  z-index: 9;
+  pointer-events: none;
+}
