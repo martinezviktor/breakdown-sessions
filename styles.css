@@ -5,6 +5,8 @@
   --line: #1f1f1f;
   --frame: 14px;
   --player: 172px;
+  /* Alto extra que ocupa el recuadro propio del reproductor (0 si no lleva). */
+  --extra: 0px;
   /* Zona que el iPhone reserva abajo (esquinas redondeadas y barra de inicio). */
   --safe: env(safe-area-inset-bottom, 0px);
   /* Fuente secundaria para rótulos en mayúsculas (la más cercana a la Lovelo del logo). */
@@ -25,7 +27,7 @@ body {
   font-size: 19px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  padding: var(--frame) var(--frame) calc(var(--frame) + var(--player) + var(--safe));
+  padding: var(--frame) var(--frame) calc(var(--frame) + var(--player) + var(--extra) + var(--safe));
 }
 
 /* Recuadro blanco fijo a la pantalla: el contenido se desplaza por dentro. Se cierra justo
@@ -33,7 +35,7 @@ body {
 body::before {
   content: '';
   position: fixed;
-  inset: 0 0 calc(var(--player) + var(--safe));
+  inset: 0 0 calc(var(--player) + var(--extra) + var(--safe));
   border: var(--frame) solid var(--ink);
   pointer-events: none;
   z-index: 20;
@@ -215,7 +217,7 @@ li.playing .ep-num { color: var(--ink); }
 .player {
   position: fixed;
   left: 0; right: 0; bottom: 0;
-  height: calc(var(--player) + var(--safe));
+  height: calc(var(--player) + var(--extra) + var(--safe));
   padding-bottom: var(--safe);
   z-index: 10;
   background: var(--bg);
@@ -447,3 +449,30 @@ li.playing .ep-num { color: var(--ink); }
   section > .eyebrow { margin-bottom: 24px; }
   .footer { padding: 32px 20px; }
 }
+
+/* Recuadro propio del reproductor, de doble línea: la de afuera llega hasta el borde de la pantalla
+   (abajo y a los lados) y la fina va por dentro. Un hueco negro lo separa del recuadro de
+   la página. */
+:root {
+  --pg: 8px;   /* hueco entre el recuadro de la página y el del reproductor */
+  --pb: 3px;   /* grosor de la línea de afuera */
+  --px: 5px;   /* espacio que ocupa la línea fina de adentro */
+  --extra: calc(var(--pg) + var(--pb) * 2 + var(--px) * 2 + 8px);
+}
+.player {
+  padding-top: calc(var(--pg) + var(--pb) + var(--px) + 6px);
+  padding-bottom: calc(var(--safe) + var(--pb) + var(--px) + 2px);
+}
+.player::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--pg);
+  bottom: 0;
+  border: var(--pb) solid var(--ink);
+  outline: 1px solid var(--ink);
+  outline-offset: -8px;
+  pointer-events: none;
+}
+.bar { margin: 0 calc(var(--pb) + var(--px) + 10px); }
