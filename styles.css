@@ -587,3 +587,10 @@ html.player-min .mini {
 }
 .mini-open span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mini-open svg { width: 20px; height: 20px; flex: none; color: var(--dim); }
+
+/* Celular: en la tira, el título va centrado. El play y la flecha miden lo mismo, así que el
+   centro del título coincide con el centro de la pantalla. */
+@media (max-width: 700px) {
+  .mini-open span { text-align: center; }
+  .mini-open svg { width: 22px; height: 22px; }
+}
