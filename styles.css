@@ -594,3 +594,23 @@ html.player-min .mini {
   .mini-open span { text-align: center; }
   .mini-open svg { width: 22px; height: 22px; }
 }
+
+/* La tira se arma con posiciones fijas en vez de cajas flexibles: Safari en iPhone no reparte
+   bien el espacio dentro de un botón, y el título quedaba corrido. Con márgenes iguales a los
+   dos lados, el título queda centrado en la pantalla. */
+html.player-min .mini { position: relative; display: block; padding: 0; }
+.mini-play { position: absolute; left: 16px; top: 4px; z-index: 1; }
+.mini-open { position: absolute; inset: 0; display: block; width: 100%; }
+.mini-open span {
+  position: absolute;
+  left: 50px;
+  right: 50px;
+  top: 0;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mini-open svg { position: absolute; right: 16px; top: 4px; width: 22px; height: 22px; }
