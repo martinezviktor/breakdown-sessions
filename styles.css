@@ -614,3 +614,10 @@ html.player-min .mini { position: relative; display: block; padding: 0; }
   white-space: nowrap;
 }
 .mini-open svg { position: absolute; right: 16px; top: 4px; width: 22px; height: 22px; }
+
+/* En la tira, el mismo aire arriba y abajo dentro del recuadro, para que el título, el play y
+   la flecha queden centrados a lo alto (antes quedaban un poco bajos). */
+html.player-min .player {
+  padding-top: calc(var(--pg) + var(--pb) + 4px);
+  padding-bottom: calc(var(--safe) + var(--pb) + 4px);
+}
